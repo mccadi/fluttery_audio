@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:fluttery_audio/fluttery_audio.dart';
+import 'package:fluttery_audio_temp/fluttery_audio.dart';
 import 'package:meta/meta.dart';
 
 class DeclarativeButtonListComponentsScreen extends StatefulWidget {
-
   final String audioUrl;
 
   DeclarativeButtonListComponentsScreen({
@@ -11,11 +10,12 @@ class DeclarativeButtonListComponentsScreen extends StatefulWidget {
   });
 
   @override
-  _DeclarativeButtonListComponentsScreenState createState() => new _DeclarativeButtonListComponentsScreenState();
+  _DeclarativeButtonListComponentsScreenState createState() =>
+      new _DeclarativeButtonListComponentsScreenState();
 }
 
-class _DeclarativeButtonListComponentsScreenState extends State<DeclarativeButtonListComponentsScreen> {
-
+class _DeclarativeButtonListComponentsScreenState
+    extends State<DeclarativeButtonListComponentsScreen> {
   @override
   initState() {
     super.initState();
@@ -44,59 +44,80 @@ class _DeclarativeButtonListComponentsScreenState extends State<DeclarativeButto
             updateMe: [
               WatchableAudioProperties.audioPlayerState,
             ],
-            playerBuilder: (BuildContext context, AudioPlayer player, Widget child) {
-              return _buildButton('LOAD AUDIO', player.state == AudioPlayerState.idle
-                  || player.state == AudioPlayerState.stopped ? () {
-                player.loadMedia(Uri.parse(widget.audioUrl));
-              } : null);
+            playerBuilder:
+                (BuildContext context, AudioPlayer player, Widget child) {
+              return _buildButton(
+                  'LOAD AUDIO',
+                  player.state == AudioPlayerState.idle ||
+                          player.state == AudioPlayerState.stopped
+                      ? () {
+                          player.loadMedia(Uri.parse(widget.audioUrl));
+                        }
+                      : null);
             },
           ),
-
           new AudioComponent(
             updateMe: [
               WatchableAudioProperties.audioPlayerState,
             ],
-            playerBuilder: (BuildContext context, AudioPlayer player, Widget child) {
-              return _buildButton('PLAY AUDIO', player.state == AudioPlayerState.paused
-                  || player.state == AudioPlayerState.completed ? () {
-                player.play();
-              } : null);
+            playerBuilder:
+                (BuildContext context, AudioPlayer player, Widget child) {
+              return _buildButton(
+                  'PLAY AUDIO',
+                  player.state == AudioPlayerState.paused ||
+                          player.state == AudioPlayerState.completed
+                      ? () {
+                          player.play();
+                        }
+                      : null);
             },
           ),
-
           new AudioComponent(
             updateMe: [
               WatchableAudioProperties.audioPlayerState,
             ],
-            playerBuilder: (BuildContext context, AudioPlayer player, Widget child) {
-              return _buildButton('PAUSE AUDIO', player.state == AudioPlayerState.playing ? () {
-                player.pause();
-              } : null);
+            playerBuilder:
+                (BuildContext context, AudioPlayer player, Widget child) {
+              return _buildButton(
+                  'PAUSE AUDIO',
+                  player.state == AudioPlayerState.playing
+                      ? () {
+                          player.pause();
+                        }
+                      : null);
             },
           ),
-
           new AudioComponent(
             updateMe: [
               WatchableAudioProperties.audioPlayerState,
             ],
-            playerBuilder: (BuildContext context, AudioPlayer player, Widget child) {
-              return _buildButton('STOP AUDIO', player.state == AudioPlayerState.playing
-                  || player.state == AudioPlayerState.paused
-                  || player.state == AudioPlayerState.completed ? () {
-                player.stop();
-              } : null);
+            playerBuilder:
+                (BuildContext context, AudioPlayer player, Widget child) {
+              return _buildButton(
+                  'STOP AUDIO',
+                  player.state == AudioPlayerState.playing ||
+                          player.state == AudioPlayerState.paused ||
+                          player.state == AudioPlayerState.completed
+                      ? () {
+                          player.stop();
+                        }
+                      : null);
             },
           ),
-
           new AudioComponent(
             updateMe: [
               WatchableAudioProperties.audioLength,
               WatchableAudioProperties.audioPlayhead,
             ],
-            playerBuilder: (BuildContext context, AudioPlayer player, Widget child) {
+            playerBuilder:
+                (BuildContext context, AudioPlayer player, Widget child) {
               return new Slider(
-                value: player.position == null || player.audioLength == null ? 0.0 : player.position.inMilliseconds.toDouble(),
-                max: player.position == null || player.audioLength == null ? 1.0 : player.audioLength.inMilliseconds.toDouble(),
+                value: player.position == null || player.audioLength == null
+                    ? 0.0
+                    : player.position.inMilliseconds.toDouble(),
+                max: player.position == null || player.audioLength == null
+                    ? 1.0
+                    : player.audioLength.inMilliseconds.toDouble(),
                 onChanged: null,
               );
             },

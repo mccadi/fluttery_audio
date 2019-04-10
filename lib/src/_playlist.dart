@@ -1,13 +1,12 @@
 import 'package:flutter/widgets.dart';
-import 'package:fluttery_audio/src/_audio_player.dart';
-import 'package:fluttery_audio/src/_audio_player_widgets.dart';
+import 'package:fluttery_audio_temp/src/_audio_player.dart';
+import 'package:fluttery_audio_temp/src/_audio_player_widgets.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 
 final _log = new Logger('AudioPlaylist');
 
 class AudioPlaylist extends StatefulWidget {
-
   final List<String> playlist;
   final int startPlayingFromIndex;
   final PlaybackState playbackState;
@@ -27,9 +26,9 @@ class AudioPlaylist extends StatefulWidget {
 }
 
 class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
-
   static Playlist of(BuildContext context) {
-    return context.ancestorStateOfType(new TypeMatcher<_AudioPlaylistState>()) as Playlist;
+    return context.ancestorStateOfType(new TypeMatcher<_AudioPlaylistState>())
+        as Playlist;
   }
 
   int _activeAudioIndex;
@@ -111,9 +110,9 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
 }
 
 class _InheritedPlaylist extends InheritedWidget {
-
   static _InheritedPlaylist of(BuildContext context) {
-    return context.inheritFromWidgetOfExactType(_InheritedPlaylist) as _InheritedPlaylist;
+    return context.inheritFromWidgetOfExactType(_InheritedPlaylist)
+        as _InheritedPlaylist;
   }
 
   final int activeIndex;
@@ -128,11 +127,9 @@ class _InheritedPlaylist extends InheritedWidget {
   bool updateShouldNotify(_InheritedPlaylist oldWidget) {
     return oldWidget.activeIndex != activeIndex;
   }
-
 }
 
 class AudioPlaylistComponent extends StatefulWidget {
-
   final Function(BuildContext, Playlist, Widget child) playlistBuilder;
   final Widget child;
 
@@ -142,11 +139,11 @@ class AudioPlaylistComponent extends StatefulWidget {
   });
 
   @override
-  _AudioPlaylistComponentState createState() => new _AudioPlaylistComponentState();
+  _AudioPlaylistComponentState createState() =>
+      new _AudioPlaylistComponentState();
 }
 
 class _AudioPlaylistComponentState extends State<AudioPlaylistComponent> {
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -156,12 +153,12 @@ class _AudioPlaylistComponentState extends State<AudioPlaylistComponent> {
   @override
   Widget build(BuildContext context) {
     return widget.playlistBuilder != null
-      ? widget.playlistBuilder(
-          context,
-          _AudioPlaylistState.of(context),
-          widget.child,
-        )
-      : widget.child;
+        ? widget.playlistBuilder(
+            context,
+            _AudioPlaylistState.of(context),
+            widget.child,
+          )
+        : widget.child;
   }
 }
 
