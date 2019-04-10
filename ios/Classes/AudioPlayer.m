@@ -225,7 +225,7 @@ const NSString* TAG = @"AudioPlayer";
     [listener onSeekStarted];
   }
   
-  [_audioPlayer seekToTime:seekTime completionHandler:^(bool finished) {
+  [_audioPlayer seekToTime:seekTime completionHandler:^(BOOL finished) {
     for (id<AudioPlayerListener> listener in [self->_listeners allObjects]) {
       [listener onSeekCompleted:[self playbackPosition]];
     }
