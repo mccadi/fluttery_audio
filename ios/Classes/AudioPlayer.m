@@ -13,6 +13,15 @@ const NSString* TAG = @"AudioPlayer";
 
 - (id)init {
   if (self = [super init]) {
+
+    //setup audio session for background play
+    NSError *AVSessionCategoryError;
+    [[AVAudioSession sharedInstance] setCategory: AVAudioSessionCategoryPlayback error:&AVSessionCategoryError];
+    
+    //active the session
+    NSError *AVSessionActiveError;
+    [[AVAudioSession sharedInstance] setActive: YES error:&AVSessionActiveError];
+ 
     _audioPlayer = [[AVPlayer alloc] init];
     [_audioPlayer addObserver:self forKeyPath:@"status" options:0 context:nil];
     [_audioPlayer addObserver:self forKeyPath:@"rate" options:0 context:nil];
