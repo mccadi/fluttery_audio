@@ -4,7 +4,6 @@ import 'package:logging/logging.dart';
 Logger _log = new Logger('AudioVisualizer');
 
 class AudioVisualizer {
-
   final MethodChannel channel;
   final Set<FftCallback> _fftCallbacks = new Set();
   final Set<WaveformCallback> _waveformCallbacks = new Set();
@@ -29,17 +28,18 @@ class AudioVisualizer {
           }
           break;
         default:
-          throw new UnimplementedError('${call.method} is not implemented for audio visualization channel.');
+          throw new UnimplementedError(
+              '${call.method} is not implemented for audio visualization channel.');
       }
     });
   }
 
   void activate() {
-    channel.invokeMethod('audiovisualizer/activate_visualizer');
+    // channel.invokeMethod('audiovisualizer/activate_visualizer');
   }
 
   void deactivate() {
-    channel.invokeMethod('audiovisualizer/deactivate_visualizer');
+    // channel.invokeMethod('audiovisualizer/deactivate_visualizer');
   }
 
   void dispose() {
@@ -71,7 +71,6 @@ class AudioVisualizer {
       _waveformCallbacks.remove(waveformCallback);
     }
   }
-
 }
 
 typedef void FftCallback(List<int> fftSamples);

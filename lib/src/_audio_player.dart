@@ -54,7 +54,8 @@ class AudioPlayer {
 
           break;
         case "onAudioReady":
-          _log.fine('onAudioReady, audioLength: ${call.arguments['audioLength']}');
+          _log.fine(
+              'onAudioReady, audioLength: ${call.arguments['audioLength']}');
 
           // When audio is ready then we get passed the length of the clip.
           final audioLengthInMillis = call.arguments['audioLength'];
@@ -77,7 +78,8 @@ class AudioPlayer {
           }
           break;
         case "onPlayerPlaybackUpdate":
-          _log.fine('onPlayerPlaybackUpdate, position: ${call.arguments['position']}');
+          _log.fine(
+              'onPlayerPlaybackUpdate, position: ${call.arguments['position']}');
 
           // The playhead has moved, update our playhead position reference.
           _setPosition(new Duration(milliseconds: call.arguments['position']));
@@ -125,7 +127,7 @@ class AudioPlayer {
       }
     });
 
-    channel.invokeMethod('audioplayer/$playerId/activate_visualizer');
+    // channel.invokeMethod('audioplayer/$playerId/activate_visualizer');
   }
 
   void dispose() {
