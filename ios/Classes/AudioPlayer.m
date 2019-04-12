@@ -107,14 +107,15 @@ const NSString* TAG = @"AudioPlayer";
     }
     _isPlaying = TRUE;
     _isCompleted = FALSE;
-  } else if (_audioPlayer.rate == 0 && _isPlaying) {
-    // Just paused playing.
-    NSLog(@"AVPlayer paused playback.");
-    for (id<AudioPlayerListener> listener in [_listeners allObjects]) {
-      [listener onPlayerPaused];
-    }
-    _isPlaying = FALSE;
-  }
+  } 
+  // else if (_audioPlayer.rate == 0 && _isPlaying) {
+  //   // Just paused playing.
+  //   NSLog(@"AVPlayer paused playback.");
+  //   for (id<AudioPlayerListener> listener in [_listeners allObjects]) {
+  //     [listener onPlayerPaused];
+  //   }
+  //   _isPlaying = FALSE;
+  // }
 }
 
 - (void) playerDidFinish {
