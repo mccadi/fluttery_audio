@@ -8,7 +8,8 @@ final _log = new Logger('AudioPlayerWidget');
 
 class Audio extends StatefulWidget {
   static AudioPlayer of(BuildContext context) {
-    _AudioState state = context.ancestorStateOfType(new TypeMatcher<_AudioState>());
+    _AudioState state =
+        context.ancestorStateOfType(new TypeMatcher<_AudioState>());
     return state?._player;
   }
 
@@ -71,7 +72,8 @@ class _AudioState extends State<Audio> implements AudioPlayerListener {
     _setAudioUrl(widget.audioUrl);
 
     if (widget.playbackState != _playbackState) {
-      _log.fine('The desired audio playback state has changed to: ${widget.playbackState}');
+      _log.fine(
+          'The desired audio playback state has changed to: ${widget.playbackState}');
       _playbackState = widget.playbackState;
       if (_playbackState == PlaybackState.playing) {
         _player.play();
@@ -155,7 +157,15 @@ class _AudioState extends State<Audio> implements AudioPlayerListener {
   }
 
   @override
-  onPlayerCompleted() {}
+  onPlayerCompleted() {
+    _log.fine('on state changed: $onPlayerCompleted');
+    if (widget.callMe.contains(WatchableAudioProperties.audioPlayerState)) {
+      widget.playerCallback(context, _player);
+    }
+    if (widget.buildMe.contains(WatchableAudioProperties.audioPlayerState)) {
+      setState(() {});
+    }
+  }
 
   @override
   onPlayerPaused() {}
@@ -226,7 +236,8 @@ class AudioComponent extends StatefulWidget {
   _AudioComponentState createState() => new _AudioComponentState();
 }
 
-class _AudioComponentState extends State<AudioComponent> implements AudioPlayerListener {
+class _AudioComponentState extends State<AudioComponent>
+    implements AudioPlayerListener {
   AudioPlayer _player;
 
   @override
@@ -249,7 +260,9 @@ class _AudioComponentState extends State<AudioComponent> implements AudioPlayerL
 
   @override
   Widget build(BuildContext context) {
-    return widget.playerBuilder != null ? widget.playerBuilder(context, _player, widget.child) : widget.child;
+    return widget.playerBuilder != null
+        ? widget.playerBuilder(context, _player, widget.child)
+        : widget.child;
   }
 
   @override
