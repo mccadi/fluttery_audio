@@ -1,11 +1,12 @@
 import 'package:flutter/widgets.dart';
-import 'package:fluttery_audio_temp/fluttery_audio.dart';
-import 'package:fluttery_audio_temp/src/_audio_visualizer.dart';
+import 'package:fluttery_audio/fluttery_audio.dart';
+import 'package:fluttery_audio/src/_audio_visualizer.dart';
 import 'package:logging/logging.dart';
 
 final _log = new Logger('Visualizer');
 
 class Visualizer extends StatefulWidget {
+
   final Function(BuildContext context, List<int> fft) builder;
 
   Visualizer({
@@ -17,6 +18,7 @@ class Visualizer extends StatefulWidget {
 }
 
 class _VisualizerState extends State<Visualizer> {
+
   AudioVisualizer visualizer;
   List<int> fft = const [];
 
@@ -25,10 +27,12 @@ class _VisualizerState extends State<Visualizer> {
     super.initState();
     visualizer = FlutteryAudio.audioVisualizer()
       ..activate()
-      ..addListener(fftCallback: (List<int> samples) {
-        _log.fine('Got FFT samples: $samples');
-        setState(() => fft = samples);
-      });
+      ..addListener(
+          fftCallback: (List<int> samples) {
+            _log.fine('Got FFT samples: $samples');
+            setState(() => fft = samples);
+          }
+      );
   }
 
   @override

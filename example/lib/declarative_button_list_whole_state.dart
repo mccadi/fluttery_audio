@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fluttery_audio_temp/fluttery_audio.dart';
+import 'package:fluttery_audio/fluttery_audio.dart';
 import 'package:meta/meta.dart';
 
 class DeclarativeButtonListWholeStateScreen extends StatefulWidget {
+
   final String audioUrl;
 
   DeclarativeButtonListWholeStateScreen({
@@ -10,12 +11,11 @@ class DeclarativeButtonListWholeStateScreen extends StatefulWidget {
   });
 
   @override
-  _DeclarativeButtonListWholeStateScreenState createState() =>
-      new _DeclarativeButtonListWholeStateScreenState();
+  _DeclarativeButtonListWholeStateScreenState createState() => new _DeclarativeButtonListWholeStateScreenState();
 }
 
-class _DeclarativeButtonListWholeStateScreenState
-    extends State<DeclarativeButtonListWholeStateScreen> {
+class _DeclarativeButtonListWholeStateScreenState extends State<DeclarativeButtonListWholeStateScreen> {
+
   @override
   initState() {
     super.initState();
@@ -37,45 +37,25 @@ class _DeclarativeButtonListWholeStateScreenState
   Widget _buildButtonsWithSlider(AudioPlayer audioPlayer) {
     return new Column(
       children: <Widget>[
-        _buildButton(
-            'LOAD AUDIO',
-            audioPlayer.state == AudioPlayerState.idle ||
-                    audioPlayer.state == AudioPlayerState.stopped
-                ? () {
-                    audioPlayer.loadMedia(Uri.parse(widget.audioUrl));
-                  }
-                : null),
-        _buildButton(
-            'PLAY AUDIO',
-            audioPlayer.state == AudioPlayerState.paused ||
-                    audioPlayer.state == AudioPlayerState.completed
-                ? () {
-                    audioPlayer.play();
-                  }
-                : null),
-        _buildButton(
-            'PAUSE AUDIO',
-            audioPlayer.state == AudioPlayerState.playing
-                ? () {
-                    audioPlayer.pause();
-                  }
-                : null),
-        _buildButton(
-            'STOP AUDIO',
-            audioPlayer.state == AudioPlayerState.playing ||
-                    audioPlayer.state == AudioPlayerState.paused ||
-                    audioPlayer.state == AudioPlayerState.completed
-                ? () {
-                    audioPlayer.stop();
-                  }
-                : null),
+        _buildButton('LOAD AUDIO', audioPlayer.state == AudioPlayerState.idle
+            || audioPlayer.state == AudioPlayerState.stopped ? () {
+          audioPlayer.loadMedia(Uri.parse(widget.audioUrl));
+        } : null),
+        _buildButton('PLAY AUDIO', audioPlayer.state == AudioPlayerState.paused
+            || audioPlayer.state == AudioPlayerState.completed ? () {
+          audioPlayer.play();
+        } : null),
+        _buildButton('PAUSE AUDIO', audioPlayer.state == AudioPlayerState.playing ? () {
+          audioPlayer.pause();
+        } : null),
+        _buildButton('STOP AUDIO', audioPlayer.state == AudioPlayerState.playing
+            || audioPlayer.state == AudioPlayerState.paused
+            || audioPlayer.state == AudioPlayerState.completed ? () {
+          audioPlayer.stop();
+        } : null),
         new Slider(
-          value: audioPlayer.position == null || audioPlayer.audioLength == null
-              ? 0.0
-              : audioPlayer.position.inMilliseconds.toDouble(),
-          max: audioPlayer.position == null || audioPlayer.audioLength == null
-              ? 1.0
-              : audioPlayer.audioLength.inMilliseconds.toDouble(),
+          value: audioPlayer.position == null || audioPlayer.audioLength == null ? 0.0 : audioPlayer.position.inMilliseconds.toDouble(),
+          max: audioPlayer.position == null || audioPlayer.audioLength == null ? 1.0 : audioPlayer.audioLength.inMilliseconds.toDouble(),
           onChanged: null,
         ),
       ],

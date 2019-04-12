@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:fluttery_audio_temp/fluttery_audio.dart';
+import 'package:fluttery_audio/fluttery_audio.dart';
 import 'package:meta/meta.dart';
 
 class DeclarativePlaylistComponentsScreen extends StatefulWidget {
+
   final List<String> playlist;
 
   DeclarativePlaylistComponentsScreen({
@@ -10,12 +11,11 @@ class DeclarativePlaylistComponentsScreen extends StatefulWidget {
   });
 
   @override
-  _DeclarativePlaylistComponentsScreenState createState() =>
-      new _DeclarativePlaylistComponentsScreenState();
+  _DeclarativePlaylistComponentsScreenState createState() => new _DeclarativePlaylistComponentsScreenState();
 }
 
-class _DeclarativePlaylistComponentsScreenState
-    extends State<DeclarativePlaylistComponentsScreen> {
+class _DeclarativePlaylistComponentsScreenState extends State<DeclarativePlaylistComponentsScreen> {
+
   int _activeIndex = 0;
   PlaybackState _playbackState = PlaybackState.paused;
 
@@ -49,16 +49,14 @@ class _DeclarativePlaylistComponentsScreenState
                       updateMe: [
                         WatchableAudioProperties.audioPlayerState,
                       ],
-                      playerBuilder: (BuildContext context,
-                          AudioPlayer audioPlayer, Widget child) {
+                      playerBuilder: (BuildContext context, AudioPlayer audioPlayer, Widget child) {
                         IconData playPauseIcon = Icons.music_note;
                         Function onPressed;
-                        if (audioPlayer.state == AudioPlayerState.paused ||
-                            audioPlayer.state == AudioPlayerState.completed) {
+                        if (audioPlayer.state == AudioPlayerState.paused
+                          || audioPlayer.state == AudioPlayerState.completed) {
                           playPauseIcon = Icons.play_arrow;
                           onPressed = audioPlayer.play;
-                        } else if (audioPlayer.state ==
-                            AudioPlayerState.playing) {
+                        } else if (audioPlayer.state == AudioPlayerState.playing) {
                           playPauseIcon = Icons.pause;
                           onPressed = audioPlayer.pause;
                         }
@@ -92,15 +90,10 @@ class _DeclarativePlaylistComponentsScreenState
                   WatchableAudioProperties.audioLength,
                   WatchableAudioProperties.audioPlayhead,
                 ],
-                playerBuilder:
-                    (BuildContext context, AudioPlayer player, Widget child) {
+                playerBuilder: (BuildContext context, AudioPlayer player, Widget child) {
                   return new Slider(
-                    value: player.position == null || player.audioLength == null
-                        ? 0.0
-                        : player.position.inMilliseconds.toDouble(),
-                    max: player.position == null || player.audioLength == null
-                        ? 1.0
-                        : player.audioLength.inMilliseconds.toDouble(),
+                    value: player.position == null || player.audioLength == null ? 0.0 : player.position.inMilliseconds.toDouble(),
+                    max: player.position == null || player.audioLength == null ? 1.0 : player.audioLength.inMilliseconds.toDouble(),
                     onChanged: null,
                   );
                 },

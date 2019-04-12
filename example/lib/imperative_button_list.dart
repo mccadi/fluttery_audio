@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttery_audio_temp/fluttery_audio.dart';
+import 'package:fluttery_audio/fluttery_audio.dart';
 import 'package:meta/meta.dart';
 
 class ImperativeButtonListScreen extends StatefulWidget {
@@ -10,12 +10,10 @@ class ImperativeButtonListScreen extends StatefulWidget {
   });
 
   @override
-  _ImperativeButtonListScreenState createState() =>
-      new _ImperativeButtonListScreenState();
+  _ImperativeButtonListScreenState createState() => new _ImperativeButtonListScreenState();
 }
 
-class _ImperativeButtonListScreenState
-    extends State<ImperativeButtonListScreen> {
+class _ImperativeButtonListScreenState extends State<ImperativeButtonListScreen> {
   AudioPlayer audioPlayer;
   Duration audioLength;
   Duration position;
@@ -25,8 +23,7 @@ class _ImperativeButtonListScreenState
     super.initState();
 
     audioPlayer = FlutteryAudio.audioPlayer();
-    audioPlayer.addListener(
-        AudioPlayerListener(onAudioLengthChanged: (Duration audioLength) {
+    audioPlayer.addListener(AudioPlayerListener(onAudioLengthChanged: (Duration audioLength) {
       setState(() {
         this.audioLength = audioLength;
       });
@@ -68,9 +65,7 @@ class _ImperativeButtonListScreenState
         }),
         new Slider(
             value: position == null ? 0.0 : position.inMilliseconds.toDouble(),
-            max: audioLength == null
-                ? 1.0
-                : audioLength.inMilliseconds.toDouble(),
+            max: audioLength == null ? 1.0 : audioLength.inMilliseconds.toDouble(),
             onChanged: (double newValue) {}),
       ],
     );
