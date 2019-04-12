@@ -60,15 +60,17 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
 
   @override
   void next() {
-    print('next');
+    _log.fine('call next()');
     if (_activeAudioIndex < (widget.playlist.length - 1)) {
-      setState(() => ++_activeAudioIndex);
+      setState(() {
+        _log.fine('_activeAudioIndex: $_activeAudioIndex');
+        ++_activeAudioIndex;
+      });
     }
   }
 
   @override
   void previous() {
-    print('previous');
     if (_activeAudioIndex > 0) {
       setState(() => --_activeAudioIndex);
     }
