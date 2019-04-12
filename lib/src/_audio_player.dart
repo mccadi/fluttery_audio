@@ -212,6 +212,8 @@ class AudioPlayer {
 
   void loadMedia(Uri uri) {
     _log.fine('loadMedia()');
+    print('loadMedia()');
+
     // TODO: how to represent media
     channel.invokeMethod(
       'audioplayer/$playerId/load',

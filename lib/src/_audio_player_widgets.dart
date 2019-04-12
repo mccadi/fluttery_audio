@@ -56,6 +56,8 @@ class _AudioState extends State<Audio> implements AudioPlayerListener {
   void didUpdateWidget(Widget oldWidget) {
     super.didUpdateWidget(oldWidget);
     _log.fine('Widget changed. Updating Audio Widget state.');
+    print('Widget changed. Updating Audio Widget state.');
+
     _synchronizeStateWithWidget();
   }
 
@@ -74,6 +76,8 @@ class _AudioState extends State<Audio> implements AudioPlayerListener {
     if (widget.playbackState != _playbackState) {
       _log.fine(
           'The desired audio playback state has changed to: ${widget.playbackState}');
+      print(
+          'The desired audio playback state has changed to: ${widget.playbackState}');
       _playbackState = widget.playbackState;
       if (_playbackState == PlaybackState.playing) {
         _player.play();
@@ -84,6 +88,7 @@ class _AudioState extends State<Audio> implements AudioPlayerListener {
   }
 
   _setAudioUrl(String url) {
+    print('_setAudioUrl: ' + url);
     // If the url has changed then we need to switch audio sources.
     if (url != _audioUrl) {
       _audioUrl = url;
@@ -159,6 +164,8 @@ class _AudioState extends State<Audio> implements AudioPlayerListener {
   @override
   onPlayerCompleted() {
     _log.fine('on state changed: $onPlayerCompleted');
+    print('on state changed: $onPlayerCompleted');
+
     if (widget.callMe.contains(WatchableAudioProperties.audioPlayerState)) {
       widget.playerCallback(context, _player);
     }
