@@ -7,7 +7,6 @@ import 'package:meta/meta.dart';
 final _log = new Logger('AudioPlaylist');
 
 class AudioPlaylist extends StatefulWidget {
-
   final List<String> playlist;
   final int startPlayingFromIndex;
   final PlaybackState playbackState;
@@ -27,9 +26,9 @@ class AudioPlaylist extends StatefulWidget {
 }
 
 class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
-
   static Playlist of(BuildContext context) {
-    return context.ancestorStateOfType(new TypeMatcher<_AudioPlaylistState>()) as Playlist;
+    return context.ancestorStateOfType(new TypeMatcher<_AudioPlaylistState>())
+        as Playlist;
   }
 
   int _activeAudioIndex;
@@ -61,6 +60,7 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
 
   @override
   void next() {
+    print('next');
     if (_activeAudioIndex < (widget.playlist.length - 1)) {
       setState(() => ++_activeAudioIndex);
     }
@@ -68,6 +68,7 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
 
   @override
   void previous() {
+    print('previous');
     if (_activeAudioIndex > 0) {
       setState(() => --_activeAudioIndex);
     }
@@ -86,9 +87,12 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
         WatchableAudioProperties.audioPlayerState,
       ],
       playerCallback: (BuildContext context, AudioPlayer player) {
+        print('playerCallback: player.state: ${player.state}');
+
         if (_prevState != player.state) {
           if (player.state == AudioPlayerState.completed) {
             _log.fine('Reached end of audio. Trying to play next clip.');
+            print('Reached end of audio. Trying to play next clip.');
             // Playback has completed. Go to next song.
             next();
           }
@@ -111,9 +115,9 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
 }
 
 class _InheritedPlaylist extends InheritedWidget {
-
   static _InheritedPlaylist of(BuildContext context) {
-    return context.inheritFromWidgetOfExactType(_InheritedPlaylist) as _InheritedPlaylist;
+    return context.inheritFromWidgetOfExactType(_InheritedPlaylist)
+        as _InheritedPlaylist;
   }
 
   final int activeIndex;
@@ -128,11 +132,9 @@ class _InheritedPlaylist extends InheritedWidget {
   bool updateShouldNotify(_InheritedPlaylist oldWidget) {
     return oldWidget.activeIndex != activeIndex;
   }
-
 }
 
 class AudioPlaylistComponent extends StatefulWidget {
-
   final Function(BuildContext, Playlist, Widget child) playlistBuilder;
   final Widget child;
 
@@ -142,11 +144,11 @@ class AudioPlaylistComponent extends StatefulWidget {
   });
 
   @override
-  _AudioPlaylistComponentState createState() => new _AudioPlaylistComponentState();
+  _AudioPlaylistComponentState createState() =>
+      new _AudioPlaylistComponentState();
 }
 
 class _AudioPlaylistComponentState extends State<AudioPlaylistComponent> {
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -156,12 +158,12 @@ class _AudioPlaylistComponentState extends State<AudioPlaylistComponent> {
   @override
   Widget build(BuildContext context) {
     return widget.playlistBuilder != null
-      ? widget.playlistBuilder(
-          context,
-          _AudioPlaylistState.of(context),
-          widget.child,
-        )
-      : widget.child;
+        ? widget.playlistBuilder(
+            context,
+            _AudioPlaylistState.of(context),
+            widget.child,
+          )
+        : widget.child;
   }
 }
 
