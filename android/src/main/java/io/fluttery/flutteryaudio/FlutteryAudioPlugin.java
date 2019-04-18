@@ -2,7 +2,7 @@ package io.fluttery.flutteryaudio;
 
 import android.media.MediaPlayer;
 import android.media.audiofx.Visualizer;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import java.util.Arrays;

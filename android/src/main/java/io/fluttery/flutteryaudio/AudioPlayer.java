@@ -3,7 +3,7 @@ package io.fluttery.flutteryaudio;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import java.io.IOException;

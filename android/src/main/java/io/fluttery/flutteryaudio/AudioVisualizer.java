@@ -2,7 +2,7 @@ package io.fluttery.flutteryaudio;
 
 import android.media.audiofx.Equalizer;
 import android.media.audiofx.Visualizer;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class AudioVisualizer {
 
