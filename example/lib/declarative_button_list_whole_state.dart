@@ -5,9 +5,15 @@ import 'package:meta/meta.dart';
 class DeclarativeButtonListWholeStateScreen extends StatefulWidget {
 
   final String audioUrl;
+  final String audioTitle;
+  final String audioAuthor;
+  final String audioArtworkUrl;
 
   DeclarativeButtonListWholeStateScreen({
     @required this.audioUrl,
+    this.audioTitle,
+    this.audioAuthor,
+    this.audioArtworkUrl,
   });
 
   @override
@@ -39,7 +45,7 @@ class _DeclarativeButtonListWholeStateScreenState extends State<DeclarativeButto
       children: <Widget>[
         _buildButton('LOAD AUDIO', audioPlayer.state == AudioPlayerState.idle
             || audioPlayer.state == AudioPlayerState.stopped ? () {
-          audioPlayer.loadMedia(Uri.parse(widget.audioUrl));
+          audioPlayer.loadMedia(Uri.parse(widget.audioUrl),widget.audioTitle, widget.audioAuthor, widget.audioArtworkUrl);
         } : null),
         _buildButton('PLAY AUDIO', audioPlayer.state == AudioPlayerState.paused
             || audioPlayer.state == AudioPlayerState.completed ? () {

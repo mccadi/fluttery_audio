@@ -210,14 +210,25 @@ class AudioPlayer {
     _listeners.remove(listener);
   }
 
-  void loadMedia(Uri uri) {
+  void loadMedia(Uri uri, String title, String author, String coverArtwork) {
     _log.fine('loadMedia()');
     print('loadMedia()');
 
+/**
+ *  NSString* url = args[@"audioUrl"];
+    NSString* title = args[@"audioTitle"];
+    NSString* mediaCoverUrl = args[@"audioMediaCoverUrl"];
+    NSString* artist = args[@"audioArtist"];
+ */
     // TODO: how to represent media
     channel.invokeMethod(
       'audioplayer/$playerId/load',
-      {'audioUrl': uri.toString()},
+      {
+        'audioUrl': uri.toString(),
+        'audioTitle': title,
+        'audioMediaCoverUrl': coverArtwork,
+        'audioArtist': author
+      },
     );
   }
 

@@ -1,5 +1,6 @@
 package io.fluttery.flutteryaudio;
 
+import android.media.AudioAttributes;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -61,7 +62,7 @@ public class AudioPlayer {
         listeners.remove(listener);
     }
 
-    public void load(String url) {
+    public void load(String url, String audioTitle,String audioMediaCoverUrl,String audioArtist) {
         Log.d(TAG, "load()");
         try {
             // Stop polling the playhead position in case we were already

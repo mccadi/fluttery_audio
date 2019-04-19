@@ -183,6 +183,48 @@ const NSString* TAG = @"AudioPlayer";
     [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = lockScreenInfo;
 }
 
+- (void) load:(NSString*) urlString title:(NSString*)title mediaCoverUrl:(NSString*)mediaCoverUrl artist:(NSString*)artist {
+    NSLog(@"%@: %@", TAG, @"load()");
+    _isAudioReady = FALSE;
+    _isStopped = FALSE;
+    _isCompleted = FALSE;
+    
+    for (id<AudioPlayerListener> listener in [_listeners allObjects]) {
+        [listener onAudioLoading];
+    }
+    
+    // We need to assemble an AVURLAsset instead of sending of the URL directly into
+    // AVPlayerItem because we need to load the "duration" of the audio stream which requires
+    // using the AVURLAsset constructor.
+    NSURL* url = [NSURL URLWithString:urlString];
+    AVURLAsset* urlAsset = [AVURLAsset assetWithURL:url];
+    AVPlayerItem* audio = [[AVPlayerItem alloc] initWithAsset:urlAsset automaticallyLoadedAssetKeys:@[@"duration"]];
+    [audio addObserver:self forKeyPath:@"status" options:0 context:nil];
+    
+    [_audioPlayer replaceCurrentItemWithPlayerItem:audio];
+    
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    dispatch_async(queue, ^{
+        
+        NSMutableDictionary *songInfo = [NSMutableDictionary dictionary];
+        
+        [songInfo setValue:title forKey:MPMediaItemPropertyTitle];
+        [songInfo setValue:artist forKey:MPMediaItemPropertyArtist];
+        
+        UIImage *artworkImage = [UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:mediaCoverUrl]]];
+        
+        if(artworkImage)
+        {
+            MPMediaItemArtwork *albumArt = [[MPMediaItemArtwork alloc] initWithImage: artworkImage];
+            [songInfo setValue:albumArt forKey:MPMediaItemPropertyArtwork];
+        }
+        
+        MPNowPlayingInfoCenter *infoCenter = [MPNowPlayingInfoCenter defaultCenter];
+        infoCenter.nowPlayingInfo = songInfo;
+    });
+
+}
+
 - (long) audioLength {
   if (_audioPlayer.currentItem != nil && _audioPlayer.currentItem.duration.value > 0) {
     CMTime time = [_audioPlayer.currentItem duration];

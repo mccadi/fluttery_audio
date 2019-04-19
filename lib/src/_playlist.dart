@@ -4,17 +4,19 @@ import 'package:fluttery_audio/src/_audio_player_widgets.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 
+import '_audio_item.dart';
+
 final _log = new Logger('AudioPlaylist');
 
 class AudioPlaylist extends StatefulWidget {
-  final List<String> playlist;
+  final List<dynamic> playlist;
   final int startPlayingFromIndex;
   final PlaybackState playbackState;
   final Function(BuildContext, Playlist, Widget child) playlistBuilder;
   final Widget child;
 
   AudioPlaylist({
-    this.playlist = const [],
+    this.playlist = const <dynamic>[],
     this.startPlayingFromIndex = 0,
     this.playbackState = PlaybackState.paused,
     this.playlistBuilder,
@@ -31,7 +33,7 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
         as Playlist;
   }
 
-  int _activeAudioIndex;
+  int _activeAudioIndex = 0;
   AudioPlayerState _prevState;
   AudioPlayer _audioPlayer;
 
@@ -79,8 +81,23 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
   @override
   Widget build(BuildContext context) {
     _log.fine('Building with active index: $_activeAudioIndex');
+
+    AudioItem audioItem;
+    final entry = widget.playlist != null && widget.playlist.isNotEmpty
+        ? widget.playlist[_activeAudioIndex]
+        : "";
+
+    if (entry is AudioItem) {
+      audioItem = entry;
+    } else {
+      audioItem = AudioItem(entry as String);
+    }
+
     return new Audio(
-      audioUrl: widget.playlist[_activeAudioIndex],
+      audioUrl: audioItem.url,
+      audioTitle: audioItem.title,
+      audioArtworkUrl: audioItem.artworkUrl,
+      audioAuthor: audioItem.author,
       playbackState: widget.playbackState,
       callMe: [
         WatchableAudioProperties.audioPlayerState,

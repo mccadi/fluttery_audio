@@ -45,9 +45,13 @@
     
     NSDictionary* args = call.arguments;
     NSString* url = args[@"audioUrl"];
-    NSLog(@"Audio url: %@", url);
+    NSString* title = args[@"audioTitle"];
+    NSString* mediaCoverUrl = args[@"audioMediaCoverUrl"];
+    NSString* artist = args[@"audioArtist"];
+      
+    NSLog(@"Audio url: %@ %@ %@ %@", url, title, mediaCoverUrl, artist);
     
-    [_audioPlayer load:url];
+      [_audioPlayer load:url title:title mediaCoverUrl:mediaCoverUrl artist:artist];
     
     result(nil);
   } else if ([@"play" isEqualToString:command]) {

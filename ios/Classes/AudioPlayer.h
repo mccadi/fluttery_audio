@@ -39,6 +39,8 @@
 // of onPlayerPaused.
 - (void) load:(NSString*) url;
 
+- (void) load:(NSString*) url title:(NSString*)title mediaCoverUrl:(NSString*)mediaCoverUrl artist:(NSString*)artist;
+
 // Starts playing audio that was previously loaded.
 - (void) play;
 

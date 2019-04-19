@@ -4,9 +4,15 @@ import 'package:meta/meta.dart';
 
 class ImperativeButtonListScreen extends StatefulWidget {
   final String audioUrl;
+    final String audioTitle;
+  final String audioAuthor;
+  final String audioArtworkUrl;
 
   ImperativeButtonListScreen({
     @required this.audioUrl,
+    this.audioAuthor,
+    this.audioArtworkUrl,
+    this.audioTitle,
   });
 
   @override
@@ -52,7 +58,7 @@ class _ImperativeButtonListScreenState extends State<ImperativeButtonListScreen>
     return new Column(
       children: <Widget>[
         _buildButton('LOAD AUDIO', () {
-          audioPlayer.loadMedia(Uri.parse(widget.audioUrl));
+          audioPlayer.loadMedia(Uri.parse(widget.audioUrl),widget.audioTitle, widget.audioAuthor, widget.audioArtworkUrl);
         }),
         _buildButton('PLAY AUDIO', () {
           audioPlayer.play();
