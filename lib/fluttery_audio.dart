@@ -2,6 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttery_audio/src/_audio_player.dart';
 import 'package:fluttery_audio/src/_audio_visualizer.dart';
 
+export 'src/_audio_item.dart';
 export 'src/_audio_player.dart';
 export 'src/_audio_player_widgets.dart';
 export 'src/_audio_visualizer.dart';

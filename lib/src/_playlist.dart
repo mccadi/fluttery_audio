@@ -82,22 +82,22 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
   Widget build(BuildContext context) {
     _log.fine('Building with active index: $_activeAudioIndex');
 
-    AudioItem audioItem;
+    FlutteryAudioItem flutteryAudioItem;
     final entry = widget.playlist != null && widget.playlist.isNotEmpty
         ? widget.playlist[_activeAudioIndex]
         : "";
 
-    if (entry is AudioItem) {
-      audioItem = entry;
+    if (entry is FlutteryAudioItem) {
+      flutteryAudioItem = entry;
     } else {
-      audioItem = AudioItem(entry as String);
+      flutteryAudioItem = FlutteryAudioItem(entry as String);
     }
 
     return new Audio(
-      audioUrl: audioItem.url,
-      audioTitle: audioItem.title,
-      audioArtworkUrl: audioItem.artworkUrl,
-      audioAuthor: audioItem.author,
+      audioUrl: flutteryAudioItem.url,
+      audioTitle: flutteryAudioItem.title,
+      audioArtworkUrl: flutteryAudioItem.artworkUrl,
+      audioAuthor: flutteryAudioItem.author,
       playbackState: widget.playbackState,
       callMe: [
         WatchableAudioProperties.audioPlayerState,
