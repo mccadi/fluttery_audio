@@ -119,9 +119,11 @@
   [_channel invokeMethod:@"onPlayerPlaybackUpdate" arguments:args];
     
     MPNowPlayingInfoCenter *infoCenter = [MPNowPlayingInfoCenter defaultCenter];
-    NSDictionary *currentEntry = infoCenter.nowPlayingInfo;
+    NSMutableDictionary *currentEntry = [infoCenter.nowPlayingInfo mutableCopy];
     [currentEntry setValue:[NSNumber numberWithInteger:audioLength] forKey:MPMediaItemPropertyPlaybackDuration];
-    [currentEntry setValue:[NSNumber numberWithInteger:position] forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
+    [currentEntry setValue:[NSNumber numberWithLong:position] forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
+    
+    infoCenter.nowPlayingInfo = currentEntry;
 }
 
 - (void) onPlayerPaused {
