@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
+#import <MediaPlayer/MediaPlayer.h>
 #import "AudioPlayer.h"
 
 const NSString* TAG = @"AudioPlayer";
@@ -21,6 +22,18 @@ const NSString* TAG = @"AudioPlayer";
     //active the session
     NSError *AVSessionActiveError;
     [[AVAudioSession sharedInstance] setActive: YES error:&AVSessionActiveError];
+    
+      MPRemoteCommandCenter *_instance =  [MPRemoteCommandCenter sharedCommandCenter];
+      
+      [_instance.playCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+          [self->_audioPlayer play];
+          return MPRemoteCommandHandlerStatusSuccess;
+      }];
+      
+      [_instance.pauseCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+          [self->_audioPlayer pause];
+          return MPRemoteCommandHandlerStatusSuccess;
+      }];
  
     _audioPlayer = [[AVPlayer alloc] init];
     [_audioPlayer addObserver:self forKeyPath:@"status" options:0 context:nil];
@@ -165,6 +178,9 @@ const NSString* TAG = @"AudioPlayer";
   [audio addObserver:self forKeyPath:@"status" options:0 context:nil];
 
   [_audioPlayer replaceCurrentItemWithPlayerItem:audio];
+    
+    NSDictionary *lockScreenInfo = @{ MPMediaItemPropertyTitle:urlString };
+    [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = lockScreenInfo;
 }
 
 - (long) audioLength {
@@ -240,5 +256,19 @@ const NSString* TAG = @"AudioPlayer";
     }
   }];
 }
+
+ - (void)remoteControlReceivedWithEvent:(UIEvent *)event {
+         //if it is a remote control event handle it correctly
+         if (event.type == UIEventTypeRemoteControl) {
+             if (event.subtype == UIEventSubtypeRemoteControlPlay) {
+                 [_audioPlayer play];
+             } else if (event.subtype == UIEventSubtypeRemoteControlPause) {
+                 [_audioPlayer pause];
+             } else if (event.subtype == UIEventSubtypeRemoteControlTogglePlayPause) {
+                [_audioPlayer play];
+                 [_audioPlayer pause];
+             }
+         }
+     }
 
 @end
