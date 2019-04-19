@@ -25,13 +25,53 @@ const NSString* TAG = @"AudioPlayer";
     
       MPRemoteCommandCenter *_instance =  [MPRemoteCommandCenter sharedCommandCenter];
       
+      [_instance.previousTrackCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+          
+          if (self->_isAudioReady) {
+              if (self.isCompleted) {
+                  return MPRemoteCommandHandlerStatusSuccess;
+              }
+          }
+          
+          
+          Float64 _value =  self->_audioPlayer.currentTime.value / self->_audioPlayer.currentTime.timescale - 10.0;
+        
+          [self->_audioPlayer seekToTime:(CMTimeMakeWithSeconds(_value, NSEC_PER_SEC)) completionHandler:^(BOOL finished) {
+              for (id<AudioPlayerListener> listener in [self->_listeners allObjects]) {
+                  [listener onSeekCompleted:[self playbackPosition]];
+              }
+          }];
+          
+          return MPRemoteCommandHandlerStatusSuccess;
+      }];
+      
+      [_instance.nextTrackCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
+          
+          if (self->_isAudioReady) {
+              if (self.isCompleted) {
+                  return MPRemoteCommandHandlerStatusSuccess;
+              }
+          }
+          
+          Float64 _value =  self->_audioPlayer.currentTime.value / self->_audioPlayer.currentTime.timescale + 10.0;
+          
+          [self->_audioPlayer seekToTime:(CMTimeMakeWithSeconds(_value, NSEC_PER_SEC)) completionHandler:^(BOOL finished) {
+              for (id<AudioPlayerListener> listener in [self->_listeners allObjects]) {
+                  [listener onSeekCompleted:[self playbackPosition]];
+              }
+          }];
+          
+          return MPRemoteCommandHandlerStatusSuccess;
+      }];
+      
+      
       [_instance.playCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-          [self->_audioPlayer play];
+          [self play];
           return MPRemoteCommandHandlerStatusSuccess;
       }];
       
       [_instance.pauseCommand addTargetWithHandler:^MPRemoteCommandHandlerStatus(MPRemoteCommandEvent * _Nonnull event) {
-          [self->_audioPlayer pause];
+          [self pause];
           return MPRemoteCommandHandlerStatusSuccess;
       }];
  

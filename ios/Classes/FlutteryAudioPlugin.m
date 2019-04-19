@@ -1,4 +1,5 @@
 #import "FlutteryAudioPlugin.h"
+#import <MediaPlayer/MediaPlayer.h>
 #import "AudioPlayer.h"
 
 @implementation FlutteryAudioPlugin {
@@ -116,6 +117,11 @@
   NSLog(@"onPlayerPlaybackUpdate - position: %i", position);
   NSDictionary* args = @{ @"position" : @(position), @"audioLength": @(audioLength) };
   [_channel invokeMethod:@"onPlayerPlaybackUpdate" arguments:args];
+    
+    MPNowPlayingInfoCenter *infoCenter = [MPNowPlayingInfoCenter defaultCenter];
+    NSDictionary *currentEntry = infoCenter.nowPlayingInfo;
+    [currentEntry setValue:[NSNumber numberWithInteger:audioLength] forKey:MPMediaItemPropertyPlaybackDuration];
+    [currentEntry setValue:[NSNumber numberWithInteger:position] forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
 }
 
 - (void) onPlayerPaused {
