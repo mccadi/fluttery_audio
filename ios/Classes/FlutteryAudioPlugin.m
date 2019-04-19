@@ -120,8 +120,8 @@
     
     MPNowPlayingInfoCenter *infoCenter = [MPNowPlayingInfoCenter defaultCenter];
     NSMutableDictionary *currentEntry = [infoCenter.nowPlayingInfo mutableCopy];
-    [currentEntry setValue:[NSNumber numberWithInteger:audioLength] forKey:MPMediaItemPropertyPlaybackDuration];
-    [currentEntry setValue:[NSNumber numberWithLong:position] forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
+    [currentEntry setValue:[NSNumber numberWithLong:audioLength / 1000] forKey:MPMediaItemPropertyPlaybackDuration];
+    [currentEntry setValue:[NSNumber numberWithInt: position/1000] forKey:MPNowPlayingInfoPropertyElapsedPlaybackTime];
     
     infoCenter.nowPlayingInfo = currentEntry;
 }
