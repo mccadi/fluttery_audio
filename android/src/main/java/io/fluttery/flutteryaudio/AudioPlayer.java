@@ -1,7 +1,9 @@
 package io.fluttery.flutteryaudio;
 
+import android.content.Context;
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
+import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.HandlerThread;
 import androidx.annotation.NonNull;
@@ -26,14 +28,17 @@ public class AudioPlayer {
 
     private final Set<Listener> listeners = new CopyOnWriteArraySet<>();
     private MediaPlayer mediaPlayer;
+    private WifiManager.WifiLock wifiLock;
     private State state;
     private boolean isPlaybackDesired = false;
     private Handler playbackPollHandler;
     private boolean isPollingPlayback = false;
 
-    public AudioPlayer(@NonNull MediaPlayer mediaPlayer) {
+    public AudioPlayer(@NonNull MediaPlayer mediaPlayer, WifiManager.WifiLock wifiLock) {
+
         AudioPlayer.playerId = mediaPlayer.getAudioSessionId();
         this.mediaPlayer = mediaPlayer;
+        this.wifiLock = wifiLock;
         this.state = State.idle;
 
         HandlerThread handlerThread = new HandlerThread("AudioPlayer");
@@ -49,6 +54,7 @@ public class AudioPlayer {
     }
 
     public void release() {
+        wifiLock.release();
         this.mediaPlayer.release();
         this.listeners.clear();
         this.playbackPollHandler.removeCallbacks(null);
@@ -63,6 +69,7 @@ public class AudioPlayer {
     }
 
     public void load(String url, String audioTitle,String audioMediaCoverUrl,String audioArtist) {
+        wifiLock.acquire();
         Log.d(TAG, "load()");
         try {
             // Stop polling the playhead position in case we were already
@@ -95,6 +102,7 @@ public class AudioPlayer {
     }
 
     public void play() {
+        wifiLock.acquire();
         Log.d(TAG, "play()");
         isPlaybackDesired = true;
 
@@ -128,6 +136,7 @@ public class AudioPlayer {
     }
 
     public void pause() {
+        wifiLock.release();
         Log.d(TAG, "pause()");
         isPlaybackDesired = false;
 
@@ -150,6 +159,7 @@ public class AudioPlayer {
     }
 
     public void stop() {
+        wifiLock.release();
         Log.d(TAG, "stop()");
         isPlaybackDesired = false;
 
@@ -180,6 +190,7 @@ public class AudioPlayer {
     }
 
     public void seek(int seekPositionInMillis) {
+        wifiLock.acquire();
         Log.d(TAG, "seek() - Current playhead: "
                 + mediaPlayer.getCurrentPosition()
                 + ", Seek position: " + seekPositionInMillis + "ms");

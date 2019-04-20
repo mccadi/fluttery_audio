@@ -1,8 +1,13 @@
 package io.fluttery.flutteryaudio;
 
+import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.audiofx.Visualizer;
 import androidx.annotation.NonNull;
+
+import android.net.wifi.WifiManager;
+import android.os.PowerManager;
 import android.util.Log;
 
 import java.util.Arrays;
@@ -34,7 +39,7 @@ public class FlutteryAudioPlugin implements MethodCallHandler {
    */
   public static void registerWith(Registrar registrar) {
     channel = new MethodChannel(registrar.messenger(), "fluttery_audio");
-    channel.setMethodCallHandler(new FlutteryAudioPlugin());
+    channel.setMethodCallHandler(new FlutteryAudioPlugin(registrar));
 
     visualizerChannel = new MethodChannel(registrar.messenger(), "fluttery_audio_visualizer");
     visualizerChannel.setMethodCallHandler(new FlutteryAudioVisualizerPlugin());
@@ -42,9 +47,18 @@ public class FlutteryAudioPlugin implements MethodCallHandler {
 
   private AudioPlayer player; // TODO: support multiple players.
 
-  public FlutteryAudioPlugin() {
+  public FlutteryAudioPlugin(Registrar registrar) {
     final MediaPlayer mediaPlayer = new MediaPlayer();
-    player = new AudioPlayer(mediaPlayer);
+    mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+    mediaPlayer.setWakeMode(registrar.context(), PowerManager.PARTIAL_WAKE_LOCK);
+
+    WifiManager.WifiLock wifiLock = ((WifiManager) registrar.activity()
+            .getApplicationContext()
+            .getSystemService(Context.WIFI_SERVICE))
+
+            .createWifiLock(WifiManager.WIFI_MODE_FULL, "fluttery_audio");
+
+    player = new AudioPlayer(mediaPlayer,wifiLock);
 
     player.addListener(new AudioPlayer.Listener() {
 
