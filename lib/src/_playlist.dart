@@ -4,19 +4,19 @@ import 'package:fluttery_audio/src/_audio_player_widgets.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 
-import '_audio_item.dart';
-
 final _log = new Logger('AudioPlaylist');
 
 class AudioPlaylist extends StatefulWidget {
-  final List<dynamic> playlist;
+  final List<String> playlist;
   final int startPlayingFromIndex;
   final PlaybackState playbackState;
   final Function(BuildContext, Playlist, Widget child) playlistBuilder;
   final Widget child;
+  final bool shouldRestart;
 
   AudioPlaylist({
-    this.playlist = const <dynamic>[],
+    this.shouldRestart = true,
+    this.playlist = const [],
     this.startPlayingFromIndex = 0,
     this.playbackState = PlaybackState.paused,
     this.playlistBuilder,
@@ -29,11 +29,10 @@ class AudioPlaylist extends StatefulWidget {
 
 class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
   static Playlist of(BuildContext context) {
-    return context.ancestorStateOfType(new TypeMatcher<_AudioPlaylistState>())
-        as Playlist;
+    return context.ancestorStateOfType(new TypeMatcher<_AudioPlaylistState>()) as Playlist;
   }
 
-  int _activeAudioIndex = 0;
+  int _activeAudioIndex;
   AudioPlayerState _prevState;
   AudioPlayer _audioPlayer;
 
@@ -50,7 +49,7 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
     // TODO: how should we handle changes to the playlist?
 
     if (widget.startPlayingFromIndex != oldWidget.startPlayingFromIndex) {
-      setState(() => _activeAudioIndex = widget.startPlayingFromIndex);
+      if (widget.shouldRestart) setState(() => _activeAudioIndex = widget.startPlayingFromIndex);
     }
   }
 
@@ -62,12 +61,8 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
 
   @override
   void next() {
-    _log.fine('call next()');
     if (_activeAudioIndex < (widget.playlist.length - 1)) {
-      setState(() {
-        _log.fine('_activeAudioIndex: $_activeAudioIndex');
-        ++_activeAudioIndex;
-      });
+      widget.shouldRestart ? setState(() => ++_activeAudioIndex) : ++_activeAudioIndex;
     }
   }
 
@@ -81,23 +76,9 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
   @override
   Widget build(BuildContext context) {
     _log.fine('Building with active index: $_activeAudioIndex');
-
-    FlutteryAudioItem flutteryAudioItem;
-    final entry = widget.playlist != null && widget.playlist.isNotEmpty
-        ? widget.playlist[_activeAudioIndex]
-        : "";
-
-    if (entry is FlutteryAudioItem) {
-      flutteryAudioItem = entry;
-    } else {
-      flutteryAudioItem = FlutteryAudioItem(entry as String);
-    }
-
     return new Audio(
-      audioUrl: flutteryAudioItem.url,
-      audioTitle: flutteryAudioItem.title,
-      audioArtworkUrl: flutteryAudioItem.artworkUrl,
-      audioAuthor: flutteryAudioItem.author,
+      shouldRestart: widget.shouldRestart,
+      audioUrl: widget.playlist[_activeAudioIndex],
       playbackState: widget.playbackState,
       callMe: [
         WatchableAudioProperties.audioPlayerState,
@@ -106,12 +87,9 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
         WatchableAudioProperties.audioPlayerState,
       ],
       playerCallback: (BuildContext context, AudioPlayer player) {
-        print('playerCallback: player.state: ${player.state}');
-
         if (_prevState != player.state) {
           if (player.state == AudioPlayerState.completed) {
             _log.fine('Reached end of audio. Trying to play next clip.');
-            print('Reached end of audio. Trying to play next clip.');
             // Playback has completed. Go to next song.
             next();
           }
@@ -124,9 +102,7 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
 
         return new _InheritedPlaylist(
           activeIndex: activeIndex,
-          child: widget.playlistBuilder != null
-              ? widget.playlistBuilder(context, this, widget.child)
-              : widget.child,
+          child: widget.playlistBuilder != null ? widget.playlistBuilder(context, this, widget.child) : widget.child,
         );
       },
     );
@@ -135,8 +111,7 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
 
 class _InheritedPlaylist extends InheritedWidget {
   static _InheritedPlaylist of(BuildContext context) {
-    return context.inheritFromWidgetOfExactType(_InheritedPlaylist)
-        as _InheritedPlaylist;
+    return context.inheritFromWidgetOfExactType(_InheritedPlaylist) as _InheritedPlaylist;
   }
 
   final int activeIndex;
@@ -163,8 +138,7 @@ class AudioPlaylistComponent extends StatefulWidget {
   });
 
   @override
-  _AudioPlaylistComponentState createState() =>
-      new _AudioPlaylistComponentState();
+  _AudioPlaylistComponentState createState() => new _AudioPlaylistComponentState();
 }
 
 class _AudioPlaylistComponentState extends State<AudioPlaylistComponent> {
