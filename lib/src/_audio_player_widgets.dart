@@ -8,15 +8,11 @@ final _log = new Logger('AudioPlayerWidget');
 
 class Audio extends StatefulWidget {
   static AudioPlayer of(BuildContext context) {
-    _AudioState state =
-        context.ancestorStateOfType(new TypeMatcher<_AudioState>());
+    _AudioState state = context.ancestorStateOfType(new TypeMatcher<_AudioState>());
     return state?._player;
   }
 
   final String audioUrl;
-  final String audioTitle;
-  final String audioAuthor;
-  final String audioArtworkUrl;
   final PlaybackState playbackState;
   final List<WatchableAudioProperties> callMe;
   final Widget Function(BuildContext, AudioPlayer) playerCallback;
@@ -26,9 +22,6 @@ class Audio extends StatefulWidget {
 
   Audio({
     this.audioUrl,
-    this.audioTitle,
-    this.audioAuthor,
-    this.audioArtworkUrl,
     this.playbackState = PlaybackState.paused,
     this.callMe = const [],
     this.playerCallback,
@@ -54,7 +47,7 @@ class _AudioState extends State<Audio> implements AudioPlayerListener {
     _player = FlutteryAudio.audioPlayer();
     _player.addListener(this);
 
-    _setAudioUrl(widget.audioUrl,widget.audioTitle, widget.audioAuthor, widget.audioArtworkUrl);
+    _setAudioUrl(widget.audioUrl);
     _playbackState = widget.playbackState;
   }
 
@@ -62,8 +55,6 @@ class _AudioState extends State<Audio> implements AudioPlayerListener {
   void didUpdateWidget(Widget oldWidget) {
     super.didUpdateWidget(oldWidget);
     _log.fine('Widget changed. Updating Audio Widget state.');
-    print('Widget changed. Updating Audio Widget state.');
-
     _synchronizeStateWithWidget();
   }
 
@@ -77,13 +68,10 @@ class _AudioState extends State<Audio> implements AudioPlayerListener {
   }
 
   void _synchronizeStateWithWidget() {
-    _setAudioUrl(widget.audioUrl, widget.audioTitle, widget.audioAuthor, widget.audioArtworkUrl);
+    _setAudioUrl(widget.audioUrl);
 
     if (widget.playbackState != _playbackState) {
-      _log.fine(
-          'The desired audio playback state has changed to: ${widget.playbackState}');
-      print(
-          'The desired audio playback state has changed to: ${widget.playbackState}');
+      _log.fine('The desired audio playback state has changed to: ${widget.playbackState}');
       _playbackState = widget.playbackState;
       if (_playbackState == PlaybackState.playing) {
         _player.play();
@@ -93,12 +81,11 @@ class _AudioState extends State<Audio> implements AudioPlayerListener {
     }
   }
 
-  _setAudioUrl(String url, String title, String author, String coverArtwork) {
-    print('_setAudioUrl: ' + url + ',' + title + ',' + author + ',' + coverArtwork);
+  _setAudioUrl(String url) {
     // If the url has changed then we need to switch audio sources.
     if (url != _audioUrl) {
       _audioUrl = url;
-      _player.loadMedia(Uri.parse(_audioUrl),title, author, coverArtwork);
+      _player.loadMedia(Uri.parse(_audioUrl));
     }
   }
 
@@ -131,7 +118,7 @@ class _AudioState extends State<Audio> implements AudioPlayerListener {
   onAudioReady() {
     _log.fine('on audio ready');
     if (_playbackState == PlaybackState.playing) {
-      _player.play();
+      // _player.play();
       _log.fine('playing automatically');
     } else if (_playbackState == PlaybackState.paused) {
       _log.fine('not playing because client doesn\'t want it');
@@ -168,17 +155,7 @@ class _AudioState extends State<Audio> implements AudioPlayerListener {
   }
 
   @override
-  onPlayerCompleted() {
-    _log.fine('on state changed: $onPlayerCompleted');
-    print('on state changed: $onPlayerCompleted');
-
-    if (widget.callMe.contains(WatchableAudioProperties.audioPlayerState)) {
-      widget.playerCallback(context, _player);
-    }
-    if (widget.buildMe.contains(WatchableAudioProperties.audioPlayerState)) {
-      setState(() {});
-    }
-  }
+  onPlayerCompleted() {}
 
   @override
   onPlayerPaused() {}
@@ -249,8 +226,7 @@ class AudioComponent extends StatefulWidget {
   _AudioComponentState createState() => new _AudioComponentState();
 }
 
-class _AudioComponentState extends State<AudioComponent>
-    implements AudioPlayerListener {
+class _AudioComponentState extends State<AudioComponent> implements AudioPlayerListener {
   AudioPlayer _player;
 
   @override
@@ -273,9 +249,7 @@ class _AudioComponentState extends State<AudioComponent>
 
   @override
   Widget build(BuildContext context) {
-    return widget.playerBuilder != null
-        ? widget.playerBuilder(context, _player, widget.child)
-        : widget.child;
+    return widget.playerBuilder != null ? widget.playerBuilder(context, _player, widget.child) : widget.child;
   }
 
   @override

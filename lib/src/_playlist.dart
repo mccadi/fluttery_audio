@@ -12,11 +12,11 @@ class AudioPlaylist extends StatefulWidget {
   final PlaybackState playbackState;
   final Function(BuildContext, Playlist, Widget child) playlistBuilder;
   final Widget child;
-  final bool shouldRestart;
+  final VoidCallback onSongEnd;
 
   AudioPlaylist({
-    this.shouldRestart = true,
     this.playlist = const [],
+    this.onSongEnd,
     this.startPlayingFromIndex = 0,
     this.playbackState = PlaybackState.paused,
     this.playlistBuilder,
@@ -32,26 +32,8 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
     return context.ancestorStateOfType(new TypeMatcher<_AudioPlaylistState>()) as Playlist;
   }
 
-  int _activeAudioIndex;
   AudioPlayerState _prevState;
   AudioPlayer _audioPlayer;
-
-  @override
-  void initState() {
-    super.initState();
-    _activeAudioIndex = widget.startPlayingFromIndex;
-  }
-
-  @override
-  void didUpdateWidget(AudioPlaylist oldWidget) {
-    super.didUpdateWidget(oldWidget);
-
-    // TODO: how should we handle changes to the playlist?
-
-    if (widget.startPlayingFromIndex != oldWidget.startPlayingFromIndex) {
-      if (widget.shouldRestart) setState(() => _activeAudioIndex = widget.startPlayingFromIndex);
-    }
-  }
 
   @override
   AudioPlayer get audioPlayer => _audioPlayer;
@@ -63,9 +45,8 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
 
   @override
   Widget build(BuildContext context) {
-    _log.fine('Building with active index: $_activeAudioIndex');
+    _log.fine('Building with active index: ${widget.startPlayingFromIndex}');
     return new Audio(
-      shouldRestart: widget.shouldRestart,
       audioUrl: widget.playlist[widget.startPlayingFromIndex],
       playbackState: widget.playbackState,
       callMe: [
@@ -79,7 +60,7 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
           if (player.state == AudioPlayerState.completed) {
             _log.fine('Reached end of audio. Trying to play next clip.');
             // Playback has completed. Go to next song.
-            next();
+            widget.onSongEnd();
           }
 
           _prevState = player.state;
