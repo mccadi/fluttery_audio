@@ -3,8 +3,56 @@ import 'package:fluttery_audio/src/_audio_player.dart';
 import 'package:fluttery_audio/src/_audio_player_widgets.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
+import 'package:dio/dio.dart';
 
 final _log = new Logger('AudioPlaylist');
+
+class Radi8erPlaylist {
+  Radi8erPlaylist() {
+    songs = List<Song>();
+  }
+  List<Song> songs;
+  static Radi8erPlaylist fromResponse(Response response) {
+    Iterable l = response.data['data'];
+    print(l.toString());
+    return Radi8erPlaylist()..songs = l.map((model) => Song.fromJson(model)).toList();
+  }
+}
+
+class Song {
+  String artUrl;
+  String artFullUrl;
+  String artMediumUrl;
+  String artist;
+  String songTitle;
+  String artThumbNailUrl;
+  int artistId;
+  String contribute;
+  int id;
+  String merch;
+  bool seed;
+  String url;
+  String website;
+  String albumName;
+
+  static Song fromJson(json) {
+    return Song()
+      ..albumName = json["album"]
+      ..artFullUrl = json["art_full"]
+      ..artMediumUrl = json["art_mid"]
+      ..artThumbNailUrl = json["art_thumb"]
+      ..artUrl = json["art_url"]
+      ..artist = json["artist"]
+      ..artistId = json["artist_id"]
+      ..songTitle = json["title"]
+      ..contribute = json["contribute"]
+      ..id = json["id"]
+      ..merch = json["merch"]
+      ..seed = json["seed"]
+      ..url = json["url"]
+      ..website = json["website"];
+  }
+}
 
 class AudioPlaylist extends StatefulWidget {
   final List<String> playlist;
@@ -13,6 +61,7 @@ class AudioPlaylist extends StatefulWidget {
   final Function(BuildContext, Playlist, Widget child) playlistBuilder;
   final Widget child;
   final VoidCallback onSongEnd;
+  final Radi8erPlaylist radi8erPlaylist;
 
   AudioPlaylist({
     this.playlist = const [],
@@ -21,6 +70,7 @@ class AudioPlaylist extends StatefulWidget {
     this.playbackState = PlaybackState.paused,
     this.playlistBuilder,
     this.child,
+    @required this.radi8erPlaylist,
   });
 
   @override
@@ -45,9 +95,14 @@ class _AudioPlaylistState extends State<AudioPlaylist> with Playlist {
 
   @override
   Widget build(BuildContext context) {
+    final song = widget.radi8erPlaylist.songs[widget.startPlayingFromIndex];
     _log.fine('Building with active index: ${widget.startPlayingFromIndex}');
     return new Audio(
       audioUrl: widget.playlist[widget.startPlayingFromIndex],
+      albumName: song.albumName,
+      artistName: song.artist,
+      coverArtwork: song.artThumbNailUrl,
+      title: song.songTitle,
       playbackState: widget.playbackState,
       callMe: [
         WatchableAudioProperties.audioPlayerState,

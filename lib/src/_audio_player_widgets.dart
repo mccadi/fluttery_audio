@@ -13,6 +13,10 @@ class Audio extends StatefulWidget {
   }
 
   final String audioUrl;
+  final String title;
+  final String artistName;
+  final String coverArtwork;
+  final String albumName;
   final PlaybackState playbackState;
   final List<WatchableAudioProperties> callMe;
   final Widget Function(BuildContext, AudioPlayer) playerCallback;
@@ -28,6 +32,10 @@ class Audio extends StatefulWidget {
     this.buildMe = const [],
     this.playerBuilder,
     this.child,
+    @required this.title,
+    @required this.artistName,
+    @required this.coverArtwork,
+    @required this.albumName,
   });
 
   @override
@@ -47,7 +55,7 @@ class _AudioState extends State<Audio> implements AudioPlayerListener {
     _player = FlutteryAudio.audioPlayer();
     _player.addListener(this);
 
-    _setAudioUrl(widget.audioUrl);
+    _setAudioInfo(widget.audioUrl);
     _playbackState = widget.playbackState;
   }
 
@@ -68,7 +76,7 @@ class _AudioState extends State<Audio> implements AudioPlayerListener {
   }
 
   void _synchronizeStateWithWidget() {
-    _setAudioUrl(widget.audioUrl);
+    _setAudioInfo(widget.audioUrl);
 
     if (widget.playbackState != _playbackState) {
       _log.fine('The desired audio playback state has changed to: ${widget.playbackState}');
@@ -81,11 +89,11 @@ class _AudioState extends State<Audio> implements AudioPlayerListener {
     }
   }
 
-  _setAudioUrl(String url) {
+  _setAudioInfo(String url) {
     // If the url has changed then we need to switch audio sources.
     if (url != _audioUrl) {
       _audioUrl = url;
-      _player.loadMedia(Uri.parse(_audioUrl));
+      _player.loadMedia(url, widget.title, widget.artistName, widget.coverArtwork, widget.albumName);
     }
   }
 

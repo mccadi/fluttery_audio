@@ -2,6 +2,7 @@ import 'dart:ui' show VoidCallback;
 
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
+import 'package:music_player/music_player.dart';
 
 final _log = new Logger('AudioPlayer');
 
@@ -16,6 +17,7 @@ class AudioPlayer {
   int _bufferedPercent;
   Duration _position;
   bool _isSeeking = false;
+  MusicPlayer musicPlayer;
 
   AudioPlayer({
     this.playerId,
@@ -24,7 +26,7 @@ class AudioPlayer {
     // TODO: ask channel for initial state so that Flutter can connect to
     // TODO: existing AudioPlayers
     _setState(AudioPlayerState.idle);
-
+    initPlatformState();
     channel.setMethodCallHandler((MethodCall call) {
       _log.fine('Received channel message: ${call.method}');
       switch (call.method) {
@@ -54,8 +56,7 @@ class AudioPlayer {
 
           break;
         case "onAudioReady":
-          _log.fine(
-              'onAudioReady, audioLength: ${call.arguments['audioLength']}');
+          _log.fine('onAudioReady, audioLength: ${call.arguments['audioLength']}');
 
           // When audio is ready then we get passed the length of the clip.
           final audioLengthInMillis = call.arguments['audioLength'];
@@ -78,8 +79,7 @@ class AudioPlayer {
           }
           break;
         case "onPlayerPlaybackUpdate":
-          _log.fine(
-              'onPlayerPlaybackUpdate, position: ${call.arguments['position']}');
+          _log.fine('onPlayerPlaybackUpdate, position: ${call.arguments['position']}');
 
           // The playhead has moved, update our playhead position reference.
           _setPosition(new Duration(milliseconds: call.arguments['position']));
@@ -210,7 +210,11 @@ class AudioPlayer {
     _listeners.remove(listener);
   }
 
-  void loadMedia(Uri uri, String title, String author, String coverArtwork) {
+  void initPlatformState() async {
+    musicPlayer = MusicPlayer();
+  }
+
+  void loadMedia(String url, String title, String author, String coverArtwork, String albumName) {
     _log.fine('loadMedia()');
     print('loadMedia()');
 
@@ -220,16 +224,19 @@ class AudioPlayer {
     NSString* mediaCoverUrl = args[@"audioMediaCoverUrl"];
     NSString* artist = args[@"audioArtist"];
  */
+    musicPlayer.play(MusicItem(
+      trackName: title,
+      albumName: albumName,
+      artistName: author,
+      url: url,
+      coverUrl: coverArtwork,
+      // duration: Duration(seconds: 255),
+    ));
     // TODO: how to represent media
-    channel.invokeMethod(
-      'audioplayer/$playerId/load',
-      {
-        'audioUrl': uri.toString(),
-        'audioTitle': title,
-        'audioMediaCoverUrl': coverArtwork,
-        'audioArtist': author
-      },
-    );
+    // channel.invokeMethod(
+    //   'audioplayer/$playerId/load',
+    //   {'audioUrl': uri.toString(), 'audioTitle': title, 'audioMediaCoverUrl': coverArtwork, 'audioArtist': author},
+    // );
   }
 
   void play() {
